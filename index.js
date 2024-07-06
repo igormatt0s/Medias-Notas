@@ -1,7 +1,7 @@
 const prompt = require("prompt-sync")();
 const chalk = require('chalk');
 
-let aluno = "";
+let aluno;
 let materias = [];
 let notas = [];
 let mediasPorMateria = [];
@@ -31,22 +31,34 @@ function cadastraMateria() {
 function cadastraNotas() {
     for(let i = 0; i < materias.length; i++){
         console.log(chalk.bgCyan.black(`Cadastrar as 3 notas da matéria ${materias[i]}`));
-        const nota1 = parseFloat(prompt(chalk.cyan(`Informe a primeira nota da matéria ${materias[i]}: `)));
-        const nota2 = parseFloat(prompt(chalk.cyan(`Informe a segunda nota da matéria ${materias[i]}: `)));
-        const nota3 = parseFloat(prompt(chalk.cyan(`Informe a terceira nota da matéria ${materias[i]}: `)));
+        let nota1, nota2, nota3;
+        let notasValidas = false;
+
+        while (!notasValidas) {
+            nota1 = parseFloat(prompt(chalk.cyan(`Informe a primeira nota da matéria ${materias[i]}: `)));
+            nota2 = parseFloat(prompt(chalk.cyan(`Informe a segunda nota da matéria ${materias[i]}: `)));
+            nota3 = parseFloat(prompt(chalk.cyan(`Informe a terceira nota da matéria ${materias[i]}: `)));
+
+            if (!isNaN(nota1) && !isNaN(nota2) && !isNaN(nota3) && nota1 >= 0 && nota2 >= 0 && nota3 >= 0) {
+                notasValidas = true;
+            } else {
+                console.log(chalk.bgRed.black("Por favor, insira valores válidos (números positivos)."));
+            }
+        }
 
         notas.push({
             [materias[i]]: {
                 nota1,
                 nota2,
                 nota3,
-            }});
+            }
+        });
+
         console.log();
     }
 }
 
 function mediaNotas() {
-    
     mediasPorMateria = notas.map((materiaObj) => {
         const notas = Object.values(materiaObj)[0];
         const media = (notas.nota1 + notas.nota2 + notas.nota3) / 3;
@@ -57,7 +69,18 @@ function mediaNotas() {
 function consultaFaltas() {
     console.log(chalk.bgYellow.black("Cadastro e Contabilização de Faltas para cada matéria"));
     for(let i = 0; i < materias.length; i++){
-        const falta = parseInt(prompt(chalk.bgRed.black(`Informe número de faltas do aluno ${aluno} na matéria ${materias[i]}: `)));
+        let falta;
+        let faltasValidas = false;
+
+        while (!faltasValidas) {
+            falta = parseInt(prompt(chalk.red(`Informe número de faltas do aluno ${aluno} na matéria ${materias[i]}: `)));
+    
+            if (!isNaN(falta) && falta >= 0) {
+                faltasValidas = true;
+            } else {
+                console.log(chalk.bgRed.black("Por favor, insira valores válidos (números positivos)."));
+            }
+        }
         faltas.push(falta);
     }
     console.log();
